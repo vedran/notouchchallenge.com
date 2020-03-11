@@ -1,74 +1,21 @@
 <!DOCTYPE html>
 <html>
 <head>
-  <script src="face-api.js"></script>
+  <script src="face-api.min.js"></script>
   <link rel="stylesheet" href="styles.css">
   <script type="text/javascript" src="https://code.jquery.com/jquery-2.1.1.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/handtrackjs/dist/handtrack.min.js"> </script>
 </head>
 <body>
   <div class="container">
     <div style="position: relative" >
-      <video onloadedmetadata="onPlay(this)" id="inputVideo" autoplay muted playsinline ></video>
-      <canvas id="overlay" />
+      <video width="640" height="480" onloadedmetadata="onPlay(this)" id="inputVideo" autoplay muted playsinline ></video>
+      <canvas id="facetrack"></canvas>
+      <canvas id="handtrack"></canvas>
     </div>
   </body>
 
-  <script>
-    let forwardTimes = []
-
-    function updateTimeStats(timeInMs) {
-      forwardTimes = [timeInMs].concat(forwardTimes).slice(0, 30)
-      const avgTimeInMs = forwardTimes.reduce((total, t) => total + t) / forwardTimes.length
-      $('#time').val(`${Math.round(avgTimeInMs)} ms`)
-      $('#fps').val(`${faceapi.utils.round(1000 / avgTimeInMs)}`)
-    }
-
-    function isFaceDetectionModelLoaded() {
-      return !!faceapi.nets.tinyFaceDetector.params;
-    }
-
-    async function onPlay() {
-      // const videoJquery = $('#inputVideo')
-      const videoEl = $('#inputVideo').get(0)
-
-      if(videoEl.paused || videoEl.ended || !isFaceDetectionModelLoaded()) {
-        return setTimeout(() => onPlay())
-      }
-
-      const options = new faceapi.TinyFaceDetectorOptions({ inputSize: 224, scoreThreshold: 0.5});
-      const ts = Date.now()
-
-      const result = await faceapi.detectSingleFace(videoEl, options)
-
-      updateTimeStats(Date.now() - ts)
-
-
-      if (result) {
-        const canvas = $('#overlay').get(0)
-        faceapi.matchDimensions(canvas, videoEl, true)
-        const dims = {width: $('#inputVideo').width(), height: $('#inputVideo').height()}
-        faceapi.draw.drawDetections(canvas, faceapi.resizeResults(result, dims));
-      }
-
-      setTimeout(() => onPlay(), 50)
-    }
-
-    async function loadFaceDetector() {
-      await faceapi.nets.tinyFaceDetector.load('/')
-    }
-
-    async function run() {
-      await loadFaceDetector()
-      // try to access users webcam and stream the images
-      // to the video element
-      const stream = await navigator.mediaDevices.getUserMedia({ video: {} })
-      const videoEl = $('#inputVideo').get(0)
-      videoEl.srcObject = stream
-    }
-
-    $(document).ready(function() {
-      run()
-    });
+  <script src="tracking.js">
   </script>
 </body>
 </html>
