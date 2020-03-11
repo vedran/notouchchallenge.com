@@ -1,4 +1,7 @@
 let forwardTimes = [];
+let handTrackModel = null;
+let handTrackingReady = false;
+const videoEl = $("#inputVideo").get(0);
 
 function updateTimeStats(timeInMs) {
   forwardTimes = [timeInMs].concat(forwardTimes).slice(0, 30);
@@ -8,7 +11,7 @@ function updateTimeStats(timeInMs) {
   $("#fps").val(`${faceapi.utils.round(1000 / avgTimeInMs)}`);
 }
 
-function isFaceDetectionModelLoaded() {
+function faceTrackingReady() {
   return !!faceapi.nets.tinyFaceDetector.params;
 }
 
@@ -17,11 +20,20 @@ const faceDetectorOptions = new faceapi.TinyFaceDetectorOptions({
   scoreThreshold: 0.5
 });
 
-async function onPlay() {
-  const videoEl = $("#inputVideo").get(0);
+async function onVideoReady() {
+  if (videoEl.paused || videoEl.ended) {
+    return setTimeout(() => onVideoReady(), 10);
+  }
 
-  if (videoEl.paused || videoEl.ended || !isFaceDetectionModelLoaded()) {
-    return setTimeout(() => onPlay(), 10);
+  await processFaceTracking();
+  await processHandTracking();
+
+  setTimeout(() => onVideoReady(), 100);
+}
+
+async function processFaceTracking() {
+  if (!faceTrackingReady()) {
+    return;
   }
 
   const ts = Date.now();
@@ -31,46 +43,14 @@ async function onPlay() {
 
   if (result) {
     const canvas = $("#facetrack").get(0);
-    faceapi.matchDimensions(canvas, videoEl, true);
-    const dims = {
-      width: $("#inputVideo").width(),
-      height: $("#inputVideo").height()
-    };
+    const dims = faceapi.matchDimensions(canvas, videoEl, true);
+    // const dims = {
+    //   width: $("#inputVideo").width(),
+    //   height: $("#inputVideo").height()
+    // };
     faceapi.draw.drawDetections(canvas, faceapi.resizeResults(result, dims));
   }
-
-  if (handTrack.isReadyNow) {
-    processHandTrack();
-  }
-
-  setTimeout(() => onPlay(), 100);
 }
-
-async function loadFaceDetector() {
-  await faceapi.nets.tinyFaceDetector.load("/");
-}
-
-async function initFaceTracking() {
-  await loadFaceDetector();
-}
-
-let handTrackModel = null;
-
-async function initHandTracking() {
-  const modelParams = {
-    flipHorizontal: false, // flip e.g for video
-    maxNumBoxes: 2, // maximum number of boxes to detect
-    iouThreshold: 0.5, // ioU threshold for non-max suppression
-    scoreThreshold: 0.8 // confidence threshold for predictions.
-  };
-
-  handTrackModel = await handTrack.load(modelParams);
-  const video = $("#inputVideo").get(0);
-
-  await handTrack.startVideo(video);
-  handTrack.isReadyNow = true;
-}
-
 function drawPredictions(predictions, canvas) {
   const context = canvas.getContext("2d");
   context.clearRect(0, 0, canvas.width, canvas.height);
@@ -109,9 +89,12 @@ function drawPredictions(predictions, canvas) {
   }
 }
 
-async function processHandTrack() {
-  const video = $("#inputVideo").get(0);
-  const predictions = await handTrackModel.detect(video);
+async function processHandTracking(video) {
+  if (!handTrackingReady) {
+    return;
+  }
+
+  const predictions = await handTrackModel.detect(videoEl);
 
   if (predictions.length) {
     const canvas = $("#handtrack").get(0);
@@ -119,17 +102,34 @@ async function processHandTrack() {
   }
 }
 
-$(document).ready(function() {
-  const videoEl = $("#inputVideo").get(0);
-  videoEl.width = 640;
-  videoEl.height = 480;
+async function initFaceTracking() {
+  await faceapi.nets.tinyFaceDetector.load("/");
+}
 
+async function initHandTracking() {
+  const modelParams = {
+    flipHorizontal: false, // flip e.g for video
+    maxNumBoxes: 2, // maximum number of boxes to detect
+    iouThreshold: 0.5, // ioU threshold for non-max suppression
+    scoreThreshold: 0.8 // confidence threshold for predictions.
+  };
+
+  handTrackModel = await handTrack.load(modelParams);
+  handTrackingReady = true;
+}
+
+async function init() {
   // try to access users webcam and stream the images
   // to the video element
-  navigator.mediaDevices.getUserMedia({ video: {} }).then(function(stream) {
-    videoEl.srcObject = stream;
+  const stream = await navigator.mediaDevices.getUserMedia({ video: {} });
+  videoEl.srcObject = stream;
 
-    initHandTracking();
-    initFaceTracking();
-  });
+  await initFaceTracking();
+  // videoEl.width = $("#facetrack").width();
+  // videoEl.height = $("#facetrack").height();
+  // await initHandTracking();
+}
+
+$(document).ready(function() {
+  init();
 });
