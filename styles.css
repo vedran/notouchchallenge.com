@@ -3,17 +3,18 @@
   top: 0;
   left: 0;
   right: 0;
-  max-width: 800px;
 }
 
-#overlay {
+canvas {
   position: absolute;
   top: 0;
   left: 0;
   right: 0;
+  max-width: 800px;
+  width: 100%;
 }
 
 video {
   width: 100%;
-  object-fit: contain;
+  object-position: top;
 }
