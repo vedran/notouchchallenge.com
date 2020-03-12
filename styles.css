@@ -106,6 +106,15 @@ button {
   padding: 8px 6px;
 }
 
+#keep-going-btn {
+  background: none;
+  text-decoration: underline;
+  color: blue;
+  border: none;
+  font-size: 20px;
+  padding: 8px 6px;
+}
+
 .video-wrapper {
   position: relative;
   max-width: 800px;

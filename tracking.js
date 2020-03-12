@@ -13,6 +13,7 @@ let paused = true;
 let curTimerInterval = null;
 let startedTrackingAt = null;
 let finalTime = null;
+let restartAfterTouch = false;
 
 function faceTrackingReady() {
   return !!faceapi.nets.tinyFaceDetector.params;
@@ -140,15 +141,25 @@ async function processHandTracking(video) {
     const restartButton =
       '<button id="restart-btn" onclick="restart()">Try again</button>';
 
+    const keepGoingButton =
+      '<button title="Continue after a touch is detected without pausing" id="keep-going-btn" onclick="keepGoing()">Just keep going</button>';
+
     $("#status").html(
       "You touched your face after  " +
         finalTime.toString() +
         " seconds. " +
         restartButton +
+        keepGoingButton +
         "<br />" +
         twitterButton +
         "<br />"
     );
+
+    if (restartAfterTouch) {
+      setTimeout(function() {
+        restart();
+      }, 2000);
+    }
 
     startedTrackingAt = null;
     curTimerInterval = null;
@@ -293,6 +304,11 @@ async function processFrames() {
 function restart() {
   start();
   paused = false;
+}
+
+function keepGoing() {
+  restartAfterTouch = true;
+  restart();
 }
 
 function start() {
