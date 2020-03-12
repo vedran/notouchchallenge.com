@@ -138,8 +138,9 @@ async function processHandTracking(video) {
       "<i></i>" +
       "Tweet #NoTouchChallenge</a></div>";
 
-    const restartButton =
-      '<button id="restart-btn" onclick="restart()">Try again</button>';
+    const restartButton = restartAfterTouch
+      ? ""
+      : '<button id="restart-btn" onclick="restart()">Try again</button>';
 
     const keepGoingButton =
       '<button title="Continue after a touch is detected without pausing" id="keep-going-btn" onclick="keepGoing()">Just keep going</button>';
