@@ -1,4 +1,3 @@
-let forwardTimes = [];
 let handTrackModel = null;
 let handTrackingReady = false;
 const videoEl = $("#inputVideo").get(0);
@@ -7,13 +6,20 @@ let lastFaceTrackingDims = null;
 let lastFaceResults = null;
 let hands = [];
 let faceSkipCount = 0;
+let lastSuccessfulFaceDetection = 0;
+let touchedAudio = new Audio("touched.mp3");
+
+let paused = true;
+let curTimerInterval = null;
+let startedTrackingAt = null;
+let finalTime = null;
 
 function faceTrackingReady() {
   return !!faceapi.nets.tinyFaceDetector.params;
 }
 
 const faceDetectorOptions = new faceapi.TinyFaceDetectorOptions({
-  inputSize: 128,
+  inputSize: 256,
   scoreThreshold: 0.5
 });
 
@@ -23,32 +29,41 @@ async function processFaceTracking() {
   }
 
   if (handTrackingReady) {
-    faceSkipCount += 1;
-
-    if (faceSkipCount < 7) {
+    if (new Date().getTime() - lastSuccessfulFaceDetection < 1500) {
       return;
     }
   }
 
-  faceSkipCount = 0;
-
   const result = await faceapi.detectSingleFace(videoEl, faceDetectorOptions);
+  const canvas = $("#facetrack").get(0);
 
   if (result) {
-    const canvas = $("#facetrack").get(0);
     if (faceTrackingDims && !lastFaceTrackingDims) {
-      videoEl.width = $("#inputVideo").width(); //faceTrackingDims.width;
-      videoEl.height = $("#inputVideo").height(); //faceTrackingDims.width;
+      videoEl.width = $("#inputVideo").width();
+      videoEl.height = $("#inputVideo").height();
 
       $("#handtrack").attr("width", $("#inputVideo").width());
       $("#handtrack").attr("height", $("#inputVideo").height());
 
       handTrackingReady = true;
     }
+
+    if (!curTimerInterval) {
+      startedTrackingAt = new Date().getTime();
+      curTimerInterval = setInterval(function() {
+        $("#status").html(
+          "Timer started. Don't touch your face! Elapsed: " +
+            ((new Date().getTime() - startedTrackingAt) / 1000.0).toString()
+        );
+      }, 100);
+    }
     lastFaceTrackingDims = faceTrackingDims;
     faceTrackingDims = faceapi.matchDimensions(canvas, videoEl, true);
     lastFaceResults = faceapi.resizeResults(result, faceTrackingDims);
     faceapi.draw.drawDetections(canvas, lastFaceResults);
+    lastSuccessfulFaceDetection = new Date().getTime();
+  } else {
+    canvas.getContext("2d").clearRect(0, 0, canvas.width, canvas.height);
   }
 }
 
@@ -98,6 +113,49 @@ async function processHandTracking(video) {
   hands = predictionsToHands(predictions);
 
   drawPredictions(hands, canvas);
+
+  if (didTouchFace()) {
+    paused = true;
+    hands = [];
+    if (touchedAudio.currentTime === 0 || touchedAudio.paused) {
+      touchedAudio.play();
+    }
+
+    clearInterval(curTimerInterval);
+    finalTime = (new Date().getTime() - startedTrackingAt) / 1000.0;
+
+    const twitterLink =
+      "https://twitter.com/intent/tweet?text=I%20made%20it%20" +
+      finalTime.toString() +
+      "%20seconds%20without%20touching%20my%20face%21%20How%20long%20will%20you%20last%20in%20the%20%23NoTouchChallenge%3F%0Ahttps%3A%2F%2Fnotouchchallenge.com%0A";
+
+    const twitterButton =
+      '<div id="twitter-btn-wrapper"><a target="_blank" ' +
+      'href="' +
+      twitterLink +
+      '">' +
+      "<i></i>" +
+      "Tweet #NoTouchChallenge</a></div>";
+
+    const restartButton =
+      '<button id="restart-btn" onclick="restart()">Try again</button>';
+
+    $("#status").html(
+      "You touched your face after  " +
+        finalTime.toString() +
+        " seconds. " +
+        restartButton +
+        "<br />" +
+        twitterButton +
+        "<br />"
+    );
+
+    startedTrackingAt = null;
+    curTimerInterval = null;
+    $("overlay").show();
+    $("after-touch").show();
+    return;
+  }
 }
 
 function predictionsToHands(predictions) {
@@ -115,7 +173,7 @@ function predictionsToHands(predictions) {
       const b = lastHand.center.y - center.y;
       const dist = Math.sqrt(a * a + b * b);
 
-      return dist < 60;
+      return dist < 200;
     });
 
     if (closestHand) {
@@ -129,7 +187,7 @@ function predictionsToHands(predictions) {
     }
 
     // If there isn't a closest hand, then this might be a new hand if it's near the bottom of the frame
-    if (center.y > $("#inputVideo").height() * 0.6) {
+    if (prediction.bbox[1] > $("#inputVideo").height() * 0.5) {
       newHands.push({
         ...prediction,
         center,
@@ -144,25 +202,73 @@ function predictionsToHands(predictions) {
   });
 }
 
-async function checkForCollisions(predictions) {
-  if (!predictions.length) {
-    return;
+function didTouchFace() {
+  if (!hands.length) {
+    return false;
   }
+
+  const faceBox = {
+    left: lastFaceResults.relativeBox.left * videoEl.width,
+    right: lastFaceResults.relativeBox.right * videoEl.width,
+    top: lastFaceResults.relativeBox.top * videoEl.height,
+    bottom: lastFaceResults.relativeBox.bottom * videoEl.height
+  };
+
+  let i;
+  for (i = 0; i < hands.length; i++) {
+    const hand = hands[i];
+
+    const handPoints = [
+      {
+        x: hand.bbox[0],
+        y: hand.bbox[1]
+      },
+      {
+        x: hand.bbox[0] + hand.bbox[2],
+        y: hand.bbox[1]
+      },
+      {
+        x: hand.bbox[0],
+        y: hand.bbox[1] + hand.bbox[3]
+      },
+      {
+        x: hand.bbox[0] + hand.bbox[2],
+        y: hand.bbox[1] + hand.bbox[3]
+      }
+    ];
+
+    const found = handPoints.find(function(pt) {
+      return (
+        pt.x >= faceBox.left &&
+        pt.x <= faceBox.right &&
+        pt.y >= faceBox.top &&
+        pt.y <= faceBox.bottom
+      );
+    });
+
+    if (found) {
+      return true;
+    }
+  }
+
+  return false;
 }
 
-async function initFaceTracking() {
-  await faceapi.nets.tinyFaceDetector.load("/");
+function loadFaceTrackingModel() {
+  faceapi.nets.tinyFaceDetector.load("/");
 }
 
-async function initHandTracking() {
+function initHandTracking() {
   const modelParams = {
     flipHorizontal: false, // flip e.g for video
     maxNumBoxes: 6, // maximum number of boxes to detect
     iouThreshold: 0.6, // ioU threshold for non-max suppression
-    scoreThreshold: 0.8 // confidence threshold for predictions.
+    scoreThreshold: 0.7 // confidence threshold for predictions.
   };
 
-  handTrackModel = await handTrack.load(modelParams);
+  handTrack.load(modelParams).then(function(model) {
+    handTrackModel = model;
+  });
 }
 
 async function onVideoReady() {
@@ -170,6 +276,10 @@ async function onVideoReady() {
 }
 
 async function processFrames() {
+  if (paused) {
+    return;
+  }
+
   if (videoEl.paused || videoEl.ended) {
     return setTimeout(() => processFrames(), 50);
   }
@@ -180,7 +290,31 @@ async function processFrames() {
   requestAnimationFrame(processFrames);
 }
 
-$(document).ready(function() {
+function restart() {
+  start();
+  paused = false;
+}
+
+function start() {
+  lastSuccessfulFaceDetection = 0;
+  curTimerInterval = null;
+  faceTrackingDims = null;
+  lastFaceTrackingDims = null;
+  lastFaceResults = null;
+  hands = [];
+  faceSkipCount = 0;
+  lastSuccessfulFaceDetection = 0;
+  touchedAudio = new Audio("touched.mp3");
+  paused = true;
+  curTimerInterval = null;
+  startedTrackingAt = null;
+  finalTime = null;
+
+  $("#notice").hide();
+  $("#overlay").hide();
+  $(".container").show();
+  $("#status").html("Detecting your face...");
+
   navigator.mediaDevices
     .getUserMedia({
       video: {
@@ -188,10 +322,24 @@ $(document).ready(function() {
       },
       audio: false
     })
-    .then(async function(stream) {
+    .then(function(stream) {
       videoEl.srcObject = stream;
-
-      await initFaceTracking();
-      await initHandTracking();
+      paused = false;
     });
+}
+
+$(document).ready(function() {
+  loadFaceTrackingModel();
+  initHandTracking();
+
+  const loadingInterval = setInterval(function() {
+    if (!handTrackModel || !faceTrackingReady()) {
+      return;
+    }
+
+    $("#start-btn").html("Let's do it!");
+    $("#start-btn").prop("disabled", false);
+
+    clearInterval(loadingInterval);
+  }, 300);
 });

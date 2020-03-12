@@ -1,8 +1,40 @@
 <!DOCTYPE html>
 <html>
   <head>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <!-- Global site tag (gtag.js) - Google Analytics -->
+    <script
+      async
+      src="https://www.googletagmanager.com/gtag/js?id=UA-28210494-6"
+    ></script>
+    <script>
+      window.dataLayer = window.dataLayer || [];
+      function gtag() {
+        dataLayer.push(arguments);
+      }
+      gtag("js", new Date());
+
+      gtag("config", "UA-28210494-6");
+    </script>
+
+    <script>
+      function trackOutboundLink(el) {
+        gtag("event", "click", {
+          event_category: "outbound",
+          event_label: el.getAttribute("href"),
+          transport_type: "beacon"
+        });
+
+        return false;
+      }
+    </script>
+
+    <link
+      href="https://fonts.googleapis.com/css?family=Roboto&display=swap"
+      rel="stylesheet"
+    />
     <script src="face-api.min.js"></script>
-    <title>Stop touching your face</title>
+    <title>How long can you go without touching your face?</title>
     <link rel="stylesheet" href="styles.css" />
     <script
       type="text/javascript"
@@ -11,10 +43,11 @@
     <script src="https://cdn.jsdelivr.net/npm/handtrackjs/dist/handtrack.min.js"></script>
   </head>
   <body>
-    <div class="container">
-      <div
-        style="position: relative; max-width: 800px; width: 100%; margin: auto;"
-      >
+    <header>
+      #NoTouchChallenge
+    </header>
+    <div class="container" style="display: none">
+      <div class="video-wrapper">
         <video
           onloadedmetadata="onVideoReady(this)"
           id="inputVideo"
@@ -24,6 +57,74 @@
         ></video>
         <canvas id="facetrack"></canvas>
         <canvas id="handtrack"></canvas>
+      </div>
+      <div id="status"></div>
+    </div>
+    <div id="overlay">
+      <div id="notice">
+        The CDC recommends not touching your face to stop the spread of
+        COVID-19. <br />
+        <br />
+        Take the
+        <a
+          target="_blank"
+          style="color: rgb(29, 161, 242);"
+          href="https://twitter.com/search?q=%23notouchchallenge"
+          onclick="trackOutboundLink(this)"
+          >#NoTouchChallenge</a
+        >
+        and see how long you can last.
+        <br />
+        <br />
+        <br />
+        <span style="font-size: 18px; color: grey">
+          This page runs best in fullscreen on a laptop or desktop with a
+          webcam.
+        </span>
+        <br />
+        <div>
+          <button id="start-btn" onclick="start()" disabled>
+            Loading...
+          </button>
+        </div>
+      </div>
+    </div>
+    <div id="footer">
+      <div>
+        <div class="footer-first">
+          Built by
+          <a
+            onclick="trackOutboundLink(this)"
+            target="_blank"
+            href="https://vedranb.com"
+            >Vedran</a
+          >. Powered by
+          <a
+            onclick="trackOutboundLink(this)"
+            target="_blank"
+            href="https://github.com/justadudewhohacks/face-api.js/"
+            >face-api.js</a
+          >
+          and
+          <a
+            onclick="trackOutboundLink(this)"
+            target="_blank"
+            href="https://github.com/victordibia/handtrack.js/"
+            >handtrack.js</a
+          >.
+        </div>
+        <span style="white-space: normal; margin-left: 8px">
+          Inspired by the
+          <a
+            onclick="trackOutboundLink(this)"
+            target="_blank"
+            href="https://www.youtube.com/lexfridman"
+            >Artificial Intelligence Podcast</a
+          >
+        </span>
+      </div>
+      <div style="color: grey; margin-top: 12px; font-size: 14px">
+        No faces, images, or videos are ever transmitted to any remote server.
       </div>
     </div>
     <script src="tracking.js"></script>
