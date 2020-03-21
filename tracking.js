@@ -200,7 +200,7 @@ function predictionsToHands(predictions) {
 }
 
 function didTouchFace() {
-  if (!hands.length) {
+  if (!hands.length || !lastFaceResults) {
     return false;
   }
 
