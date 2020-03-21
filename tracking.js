@@ -8,12 +8,14 @@ let hands = [];
 let faceSkipCount = 0;
 let lastSuccessfulFaceDetection = 0;
 let touchedAudio = new Audio("touched.mp3");
+let restartTimerInterval = null;
+let restartTimeout = null;
 
 let paused = true;
 let curTimerInterval = null;
 let startedTrackingAt = null;
 let finalTime = null;
-let restartAfterTouch = false;
+let restartTime;
 
 function faceTrackingReady() {
   return !!faceapi.nets.tinyFaceDetector.params;
@@ -28,6 +30,8 @@ async function processFaceTracking() {
   if (!faceTrackingReady()) {
     return;
   }
+
+  
 
   if (handTrackingReady) {
     if (new Date().getTime() - lastSuccessfulFaceDetection < 1500) {
@@ -46,6 +50,8 @@ async function processFaceTracking() {
       $("#handtrack").attr("width", $("#inputVideo").width());
       $("#handtrack").attr("height", $("#inputVideo").height());
 
+      $("#video-wrapper").css("max-width", $("#inputVideo").width());
+      $("#overlay").css("width", $("#inputVideo").width());
       handTrackingReady = true;
     }
 
@@ -53,8 +59,7 @@ async function processFaceTracking() {
       startedTrackingAt = new Date().getTime();
       curTimerInterval = setInterval(function() {
         $("#status").html(
-          "Timer started. Don't touch your face! Elapsed: " +
-            ((new Date().getTime() - startedTrackingAt) / 1000.0).toString()
+          "Timer: " + ((new Date().getTime() - startedTrackingAt) / 1000.0).toFixed(2)
         );
       }, 100);
     }
@@ -125,31 +130,43 @@ async function processHandTracking(video) {
     clearInterval(curTimerInterval);
     finalTime = (new Date().getTime() - startedTrackingAt) / 1000.0;
 
-    const restartButton = restartAfterTouch
-      ? ""
-      : '<button id="restart-btn" onclick="restart()">Try again</button>';
-
-    const keepGoingButton =
-      '<button title="Continue after a touch is detected without pausing" id="keep-going-btn" onclick="keepGoing()">Just keep going</button>';
-
-    $("#status").html(
-      "You touched your face after  " +
-        finalTime.toString() +
-        " seconds. " +
-        restartButton +
-        keepGoingButton +
-        "<br />"
+    $("#status").addClass("touched");
+    $("#status").html("<div id='results'>" +
+      "You lasted " + finalTime.toFixed(2) + " seconds! " +
+        "<br/><br />" +
+        "Help humanity & spread the <span class='tag'>#NoTouchChallenge</span>" +
+        "<br/><br />" +
+        "<a target='_blank' id='twitter-link' href='#'><img src='twitter.png' class='twitter' /></a>" +
+        "<a target='_blank' id='fb-link' href='#'><img src='fb.png' class='facebook' /></a>" +
+        "<br/><br /><br />" +
+        "Starting again in <span id='restart-time'>10</span>" +
+        "<br />" +
+        "<button id='restart-btn' onclick='restart()'>Try again now</button>" +
+        "</div>"
     );
+    $("#twitter-link").attr("href", "https://twitter.com/intent/tweet?url=https%3A%2F%2Fnotouchchallenge.com%2F&text=I%20lasted%20" + encodeURIComponent(finalTime.toFixed(2)) + "%20seconds%20without%20touching%20my%20face.%20How%20will%20you%20do%20in%20the%20%23NoTouchChallenge")
+    $("#fb-link").attr("href", "https://www.facebook.com/sharer/sharer.php?u=https%3A%2F%2Fnotouchchallenge.com")
 
-    if (restartAfterTouch) {
-      setTimeout(function() {
-        restart();
-      }, 2000);
-    }
+    restartTime = 20.0;
+    restartTimerInterval = setInterval(function() {
+      restartTime -= 0.05;
+      if(restartTime <= 0.0) {
+        clearInterval(restartTimerInterval);
+        return;
+      };
+      $("#restart-time").html(restartTime.toFixed(2));
+    }, 50)
+
+    clearTimeout(restartTimeout);
+    restartTimeout = setTimeout(function() {
+      restart();
+      clearTimeout(restartTimeout);
+    }, 19800)
+
 
     startedTrackingAt = null;
     curTimerInterval = null;
-    $("overlay").show();
+    $("landing").show();
     $("after-touch").show();
     return;
   }
@@ -292,12 +309,11 @@ function restart() {
   paused = false;
 }
 
-function keepGoing() {
-  restartAfterTouch = true;
-  restart();
-}
-
 function start() {
+  $("#status").removeClass("touched");
+  clearInterval(restartTimerInterval);
+  clearTimeout(restartTimeout);
+  restartTimeout = null;
   lastSuccessfulFaceDetection = 0;
   curTimerInterval = null;
   faceTrackingDims = null;
@@ -313,7 +329,7 @@ function start() {
   finalTime = null;
 
   $("#notice").hide();
-  $("#overlay").hide();
+  $("#landing").hide();
   $(".container").show();
   $("#status").html("Detecting your face...");
 

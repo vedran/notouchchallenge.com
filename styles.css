@@ -18,7 +18,7 @@ header {
 
 .container {
   position: absolute;
-  top: 90px;
+  top: 72px;
   left: 16px;
   right: 16px;
   background: white;
@@ -47,15 +47,15 @@ video {
   box-shadow: rgba(0, 0, 0, 0.3) 0px 8px 28px;
 }
 
-#overlay {
+#landing {
   position: absolute;
-  top: 0;
   left: 0;
   right: 0;
-  bottom: 0;
   padding: 32px;
   font-size: 22px;
   top: 55px;
+  background: white;
+  z-index: 999;
 }
 
 #start-btn {
@@ -86,23 +86,13 @@ button {
   color: white;
 }
 
-#status {
-  margin: auto;
-  margin-top: 24px;
-  margin-bottom: 0px;
-  width: 100%;
-  font-size: 18px;
-  max-width: 832px;
-  text-align: center;
-  padding-left: 32px;
-}
 
 #restart-btn {
   background: none;
   text-decoration: underline;
   color: blue;
   border: none;
-  font-size: 20px;
+  font-size: 16px;
   padding: 8px 6px;
 }
 
@@ -115,9 +105,9 @@ button {
   padding: 8px 6px;
 }
 
-.video-wrapper {
+#video-wrapper {
   position: relative;
-  max-width: 800px;
+  max-width: 600px;
   margin: auto;
   margin-top: 0px;
   max-height: 650px;
@@ -171,6 +161,57 @@ button {
 }
 
 #built-by {
-  font-size: 15px;
+  font-size: 16px;
   margin-top: 48px;
+  text-align: center
+}
+
+#overlay {
+  position: absolute;
+  top: 14px;
+  bottom: 16px;
+  left: 14px;
+  right: 16px;
+  z-index: 9999;
+  width: 100%;
+}
+
+#status {
+  position: absolute;
+  right: 0;
+  bottom: 0;
+  left: 0;
+  background: white;
+  color: black;
+  font-size: 18px;
+  padding: 4px 16px;
+  text-align: right;
+}
+
+#status.touched {
+  top: 0;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  flex-direction: column;
+}
+
+#results {
+  text-align: center;
+}
+
+.tag {
+  color: rgb(29, 161, 242);
+  font-weight: 500;
+}
+
+
+#twitter-link, #fb-link {
+  display: inline-block;
+  width: 50px;
+  margin: 0px 10px;
+}
+
+.twitter, .facebook {
+  width: 100%;
 }

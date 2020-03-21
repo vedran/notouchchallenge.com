@@ -30,7 +30,7 @@
     </script>
 
     <link
-      href="https://fonts.googleapis.com/css?family=Roboto&display=swap"
+      href="https://fonts.googleapis.com/css?family=Roboto:400,500&display=swap"
       rel="stylesheet"
     />
     <script src="face-api.min.js"></script>
@@ -47,7 +47,7 @@
       #NoTouchChallenge
     </header>
     <div class="container" style="display: none">
-      <div class="video-wrapper">
+      <div id="video-wrapper">
         <video
           onloadedmetadata="onVideoReady(this)"
           id="inputVideo"
@@ -57,10 +57,26 @@
         ></video>
         <canvas id="facetrack"></canvas>
         <canvas id="handtrack"></canvas>
+        <div id="overlay">
+          <div id="status"></div>
+        </div>
       </div>
-      <div id="status"></div>
+      <div id="built-by">
+        Built by
+        <a
+          onclick="trackOutboundLink(this)"
+          target="_blank"
+          href="https://vedranb.com"
+          >Vedran</a>.
+        (I work at
+        <a
+          onclick="trackOutboundLink(this)"
+          target="_blank"
+          href="https://www.noom.com"
+          >Noom</a>)
+      </div>
     </div>
-    <div id="overlay">
+    <div id="landing">
       <div id="notice">
         The CDC recommends not touching your face to stop the spread of
         COVID-19. <br />
@@ -84,20 +100,6 @@
           <button id="start-btn" onclick="start()" disabled>
             Loading...
           </button>
-        </div>
-        <div id="built-by">
-          Built by
-          <a
-            onclick="trackOutboundLink(this)"
-            target="_blank"
-            href="https://vedranb.com"
-            >Vedran</a>.
-          (I work at
-          <a
-            onclick="trackOutboundLink(this)"
-            target="_blank"
-            href="https://www.noom.com"
-            >Noom</a>)
         </div>
       </div>
     </div>
