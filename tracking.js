@@ -125,19 +125,6 @@ async function processHandTracking(video) {
     clearInterval(curTimerInterval);
     finalTime = (new Date().getTime() - startedTrackingAt) / 1000.0;
 
-    const twitterLink =
-      "https://twitter.com/intent/tweet?text=I%20made%20it%20" +
-      finalTime.toString() +
-      "%20seconds%20without%20touching%20my%20face%21%20How%20long%20will%20you%20last%20in%20the%20%23NoTouchChallenge%3F%0Ahttps%3A%2F%2Fnotouchchallenge.com%0A";
-
-    const twitterButton =
-      '<div id="twitter-btn-wrapper"><a target="_blank" ' +
-      'href="' +
-      twitterLink +
-      '">' +
-      "<i></i>" +
-      "Tweet #NoTouchChallenge</a></div>";
-
     const restartButton = restartAfterTouch
       ? ""
       : '<button id="restart-btn" onclick="restart()">Try again</button>';
@@ -151,8 +138,6 @@ async function processHandTracking(video) {
         " seconds. " +
         restartButton +
         keepGoingButton +
-        "<br />" +
-        twitterButton +
         "<br />"
     );
 
