@@ -157,6 +157,7 @@ button {
   text-align: center;
   padding: 0px 8px 24px 8px;
   z-index: 1;
+  font-size: 14px;
 }
 
 #footer .footer-first {
@@ -167,4 +168,9 @@ button {
 #footer .footer-first a {
   display: inline-block;
   color: #666666;
+}
+
+#built-by {
+  font-size: 15px;
+  margin-top: 48px;
 }
