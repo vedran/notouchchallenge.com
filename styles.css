@@ -194,6 +194,7 @@ button {
   justify-content: center;
   align-items: center;
   flex-direction: column;
+  background: rgba(255, 255, 255, 0.8);
 }
 
 #results {
@@ -206,12 +207,12 @@ button {
 }
 
 
-#twitter-link, #fb-link {
+#t-link, #f-link {
   display: inline-block;
   width: 50px;
   margin: 0px 10px;
 }
 
-.twitter, .facebook {
+.s-icon {
   width: 100%;
 }

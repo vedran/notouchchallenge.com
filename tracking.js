@@ -136,16 +136,16 @@ async function processHandTracking(video) {
         "<br/><br />" +
         "Help humanity & spread the <span class='tag'>#NoTouchChallenge</span>" +
         "<br/><br />" +
-        "<a target='_blank' id='twitter-link' href='#'><img src='twitter.png' class='twitter' /></a>" +
-        "<a target='_blank' id='fb-link' href='#'><img src='fb.png' class='facebook' /></a>" +
+        "<a target='_blank' id='t-link' href='#'><img src='t.png' class='s-icon' /></a>" +
+        "<a target='_blank' id='f-link' href='#'><img src='f.png' class='s-icon' /></a>" +
         "<br/><br /><br />" +
         "Starting again in <span id='restart-time'>10</span>" +
         "<br />" +
         "<button id='restart-btn' onclick='restart()'>Try again now</button>" +
         "</div>"
     );
-    $("#twitter-link").attr("href", "https://twitter.com/intent/tweet?url=https%3A%2F%2Fnotouchchallenge.com%2F&text=I%20lasted%20" + encodeURIComponent(finalTime.toFixed(2)) + "%20seconds%20without%20touching%20my%20face.%20How%20will%20you%20do%20in%20the%20%23NoTouchChallenge")
-    $("#fb-link").attr("href", "https://www.facebook.com/sharer/sharer.php?u=https%3A%2F%2Fnotouchchallenge.com")
+    $("#t-link").attr("href", "https://twitter.com/intent/tweet?url=https%3A%2F%2Fnotouchchallenge.com%2F&text=I%20lasted%20" + encodeURIComponent(finalTime.toFixed(2)) + "%20seconds%20without%20touching%20my%20face.%20How%20will%20you%20do%20in%20the%20%23NoTouchChallenge")
+    $("#f-link").attr("href", "https://www.facebook.com/sharer/sharer.php?u=https%3A%2F%2Fnotouchchallenge.com")
 
     restartTime = 20.0;
     restartTimerInterval = setInterval(function() {
