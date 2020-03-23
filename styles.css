@@ -7,6 +7,11 @@ body * {
   font-family: "Roboto", sans-serif;
 }
 
+body a {
+    color: #2a4bed;
+    font-weight: 500;
+}
+
 header {
   color: white;
   font-size: 20px;
@@ -27,7 +32,12 @@ header {
 
 #notice {
   text-align: center;
-  margin-top: 5%;
+  margin-left: auto;
+  margin-right: auto;
+  margin-top: 4%;
+  line-height: 1.5;
+  font-size: 18px !important;;
+  max-width: 700px;
 }
 
 canvas {
@@ -163,7 +173,11 @@ button {
 #built-by {
   font-size: 16px;
   margin-top: 48px;
-  text-align: center
+  text-align: center;
+  line-height: 1.5;
+  max-width: 600px;
+  margin-left: auto;
+  margin-right: auto;
 }
 
 #overlay {

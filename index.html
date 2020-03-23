@@ -1,129 +1,126 @@
 <!DOCTYPE html>
 <html>
-  <head>
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <!-- Global site tag (gtag.js) - Google Analytics -->
-    <script
-      async
-      src="https://www.googletagmanager.com/gtag/js?id=UA-28210494-6"
-    ></script>
-    <script>
-      window.dataLayer = window.dataLayer || [];
-      function gtag() {
-        dataLayer.push(arguments);
-      }
-      gtag("js", new Date());
+    <head>
+        <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+        <!-- Global site tag (gtag.js) - Google Analytics -->
+        <script
+            async
+            src="https://www.googletagmanager.com/gtag/js?id=UA-28210494-6"
+            ></script>
+        <script>
+            window.dataLayer = window.dataLayer || [];
+function gtag() {
+    dataLayer.push(arguments);
+}
+gtag("js", new Date());
 
-      gtag("config", "UA-28210494-6");
-    </script>
+gtag("config", "UA-28210494-6");
+        </script>
 
-    <script>
-      function trackOutboundLink(el) {
-        gtag("event", "click", {
-          event_category: "outbound",
-          event_label: el.getAttribute("href"),
-          transport_type: "beacon"
-        });
+        <script>
+            function trackOutboundLink(el) {
+                gtag("event", "click", {
+                    event_category: "outbound",
+                    event_label: el.getAttribute("href"),
+                    transport_type: "beacon"
+                });
 
-        return false;
-      }
-    </script>
+                return false;
+            }
+        </script>
 
-    <link
-      href="https://fonts.googleapis.com/css?family=Roboto:400,500&display=swap"
-      rel="stylesheet"
-    />
-    <script src="face-api.min.js"></script>
-    <title>How long can you go without touching your face?</title>
-    <link rel="stylesheet" href="styles.css" />
-    <script
-      type="text/javascript"
-      src="https://code.jquery.com/jquery-2.1.1.min.js"
-    ></script>
-    <script src="https://cdn.jsdelivr.net/npm/handtrackjs/dist/handtrack.min.js"></script>
-  </head>
-  <body>
-    <header>
-      #NoTouchChallenge
-    </header>
-    <div class="container" style="display: none">
-      <div id="video-wrapper">
-        <video
-          onloadedmetadata="onVideoReady(this)"
-          id="inputVideo"
-          autoplay
-          muted
-          playsinline
-        ></video>
-        <canvas id="facetrack"></canvas>
-        <canvas id="handtrack"></canvas>
-        <div id="overlay">
-          <div id="status"></div>
+        <link
+            href="https://fonts.googleapis.com/css?family=Roboto:400,500&display=swap"
+            rel="stylesheet"
+            />
+        <script src="face-api.min.js"></script>
+        <title>How long can you go without touching your face?</title>
+        <link rel="stylesheet" href="styles.css" />
+        <script
+            type="text/javascript"
+            src="https://code.jquery.com/jquery-2.1.1.min.js"
+            ></script>
+        <script src="https://cdn.jsdelivr.net/npm/handtrackjs/dist/handtrack.min.js"></script>
+    </head>
+    <body>
+        <header>
+            #NoTouchChallenge
+        </header>
+        <div class="container" style="display: none">
+            <div id="video-wrapper">
+                <video
+                    onloadedmetadata="onVideoReady(this)"
+                    id="inputVideo"
+                    autoplay
+                    muted
+                    playsinline
+                    ></video>
+                <canvas id="facetrack"></canvas>
+                <canvas id="handtrack"></canvas>
+                <div id="overlay">
+                    <div id="status"></div>
+                </div>
+            </div>
+            <div id="built-by">
+                Built by
+                <a onclick="trackOutboundLink(this)" target="_blank" href="https://vedranb.com" >Vedran</a>
+                to help (gently) encourage everyone to avoid touching their face and help my coworkers at
+                <a onclick="trackOutboundLink(this)" href="https://www.noom.com/careers" style=" color: #2a4bed; ">Noom</a>
+                stay healthy throughout the COVID-19 crisis.
+            </div>
         </div>
-      </div>
-      <div id="built-by">
-        Built by
-        <a
-          onclick="trackOutboundLink(this)"
-          target="_blank"
-          href="https://vedranb.com"
-          >Vedran</a>
-        for a <a onclick="trackOutboundLink(this)" target="_blank" href="https://www.noom.com/careers">Noom</a> Hackathon.
-      </div>
-    </div>
-    <div id="landing">
-      <div id="notice">
-        The CDC recommends not touching your face to stop the spread of
-        COVID-19. <br />
-        <br />
-        Take the
-        <span style="color: rgb(29, 161, 242);" >#NoTouchChallenge</span>
-        and see how long you can last.
-        <br />
-        <br />
-        <br />
-        <div style="font-size: 18px; color: grey">
-          This page runs best in fullscreen on a laptop or desktop with a
-          webcam.
+        <div id="landing">
+            <div id="notice">
+                <div style="font-size: 22px">We all know the CDC recommends not touching our faces to stop the spread of COVID-19</div>
+                <br />
+                <br />
+                <div>
+                    When you are using your laptop, <span style="color: rgb(29, 161, 242); font-weight: 500">#NoTouchChallenge</span> monitors how long you can go without touching your face. Share your best time on Twitter and Facebook to help spread the healthy behavior.
+                </div>
+                <br />
+                <br />
+                <div>
+                    I built this web app to help (gently) encourage everyone to avoid touching their face and help my coworkers at
+                    <a onclick="trackOutboundLink(this)" target="_blank" href="https://www.noom.com/careers" style="color: #2a4bed; ">Noom</a>
+                    stay healthy throughout the COVID-19 crisis.
+                </div>
+                <br>
+                <br>
+                <div style="font-size: 16px; color: grey">
+                    We aren't storing or transmitting any faces, images, or videos and won't be selling or profiting from this. We are doing this to help everyone stay safe during this COVID-19 epidemic.
+                </div>
+                <br>
+                <div>
+                    <button id="start-btn" onclick="start()">Let's do it!</button>
+                </div>
+            </div>
         </div>
- <br />
-        <div style="font-size: 16px; color: grey">
-          We aren't storing or transmitting any faces, images, or videos and won't be selling or profiting from this. We are doing this to help everyone stay safe during this COVID-19 epidemic.
+        <div id="footer">
+            <div>
+                <div class="footer-first">
+                    Code on
+                    <a
+                        onclick="trackOutboundLink(this)"
+                        target="_blank"
+                        href="https://github.com/vedran/notouchchallenge.com/"
+                        >Github</a>.
+                    Powered by
+                    <a
+                        onclick="trackOutboundLink(this)"
+                        target="_blank"
+                        href="https://github.com/justadudewhohacks/face-api.js/"
+                        >face-api.js</a
+                    >
+                    and
+                    <a
+                        onclick="trackOutboundLink(this)"
+                        target="_blank"
+                        href="https://github.com/victordibia/handtrack.js/"
+                        >handtrack.js</a
+                    >.
+                </div>
+            </div>
         </div>
-        <br />
-        <div>
-          <button id="start-btn" onclick="start()" disabled>
-            Loading...
-          </button>
-        </div>
-      </div>
-    </div>
-    <div id="footer">
-      <div>
-        <div class="footer-first">
-          Code on
-          <a
-            onclick="trackOutboundLink(this)"
-            target="_blank"
-            href="https://github.com/vedran/notouchchallenge.com/"
-            >Github</a>.
-          Powered by
-          <a
-            onclick="trackOutboundLink(this)"
-            target="_blank"
-            href="https://github.com/justadudewhohacks/face-api.js/"
-            >face-api.js</a
-          >
-          and
-          <a
-            onclick="trackOutboundLink(this)"
-            target="_blank"
-            href="https://github.com/victordibia/handtrack.js/"
-            >handtrack.js</a
-          >.
-        </div>
-      </div>
-    </div>
-    <script src="tracking.js"></script>
-  </body>
+        <script src="tracking.js"></script>
+    </body>
 </html>
