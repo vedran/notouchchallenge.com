@@ -4,7 +4,7 @@
   "description": "",
   "private": true,
   "scripts": {
-    "build": "rm -rf public/* && cp src/site/* public/"
+    "build": "rm -rf public && mkdir public && cp src/site/* public/"
   },
   "devDependencies": {},
   "dependencies": {
