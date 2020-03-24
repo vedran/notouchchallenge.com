@@ -62,6 +62,7 @@ video {
   left: 0;
   right: 0;
   padding: 32px;
+  padding-bottom: 8px;
   font-size: 22px;
   top: 55px;
   background: white;
