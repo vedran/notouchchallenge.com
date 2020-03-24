@@ -1,0 +1,13 @@
+{
+  "name": "NoTouchChallenge",
+  "version": "0.1.0",
+  "description": "",
+  "private": true,
+  "scripts": {
+    "build": "rm -rf public/* && cp src/site/* public/"
+  },
+  "devDependencies": {},
+  "dependencies": {
+    "googleapis": "^48.0.0"
+  }
+}
