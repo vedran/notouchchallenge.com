@@ -2,7 +2,6 @@ const { google } = require("googleapis");
 const atob = require("atob");
 
 exports.handler = function(event, context, callback) {
-  console.log(process.env);
   const scopes = "https://www.googleapis.com/auth/analytics.readonly";
 
   const jwt = new google.auth.JWT(
