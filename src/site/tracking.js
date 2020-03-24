@@ -31,8 +31,6 @@ async function processFaceTracking() {
     return;
   }
 
-  
-
   if (handTrackingReady) {
     if (new Date().getTime() - lastSuccessfulFaceDetection < 1500) {
       return;
@@ -59,7 +57,8 @@ async function processFaceTracking() {
       startedTrackingAt = new Date().getTime();
       curTimerInterval = setInterval(function() {
         $("#status").html(
-          "Timer: " + ((new Date().getTime() - startedTrackingAt) / 1000.0).toFixed(2)
+          "Timer: " +
+            ((new Date().getTime() - startedTrackingAt) / 1000.0).toFixed(2)
         );
       }, 100);
     }
@@ -131,8 +130,11 @@ async function processHandTracking(video) {
     finalTime = (new Date().getTime() - startedTrackingAt) / 1000.0;
 
     $("#status").addClass("touched");
-    $("#status").html("<div id='results'>" +
-      "You lasted " + finalTime.toFixed(2) + " seconds! " +
+    $("#status").html(
+      "<div id='results'>" +
+        "You lasted " +
+        finalTime.toFixed(2) +
+        " seconds! " +
         "<br/><br />" +
         "Help humanity & spread the <span class='tag'>#NoTouchChallenge</span>" +
         "<br/><br />" +
@@ -144,25 +146,32 @@ async function processHandTracking(video) {
         "<button id='restart-btn' onclick='restart()'>Try again now</button>" +
         "</div>"
     );
-    $("#t-link").attr("href", "https://twitter.com/intent/tweet?url=https%3A%2F%2Fnotouchchallenge.com%2F&text=I%20lasted%20" + encodeURIComponent(finalTime.toFixed(2)) + "%20seconds%20without%20touching%20my%20face.%20How%20will%20you%20do%20in%20the%20%23NoTouchChallenge")
-    $("#f-link").attr("href", "https://www.facebook.com/sharer/sharer.php?u=https%3A%2F%2Fnotouchchallenge.com")
+    $("#t-link").attr(
+      "href",
+      "https://twitter.com/intent/tweet?url=https%3A%2F%2Fnotouchchallenge.com%2F&text=I%20lasted%20" +
+        encodeURIComponent(finalTime.toFixed(2)) +
+        "%20seconds%20without%20touching%20my%20face.%20How%20will%20you%20do%20in%20the%20%23NoTouchChallenge"
+    );
+    $("#f-link").attr(
+      "href",
+      "https://www.facebook.com/sharer/sharer.php?u=https%3A%2F%2Fnotouchchallenge.com"
+    );
 
     restartTime = 20.0;
     restartTimerInterval = setInterval(function() {
       restartTime -= 0.05;
-      if(restartTime <= 0.0) {
+      if (restartTime <= 0.0) {
         clearInterval(restartTimerInterval);
         return;
-      };
+      }
       $("#restart-time").html(restartTime.toFixed(2));
-    }, 50)
+    }, 50);
 
     clearTimeout(restartTimeout);
     restartTimeout = setTimeout(function() {
       restart();
       clearTimeout(restartTimeout);
-    }, 19800)
-
+    }, 19800);
 
     startedTrackingAt = null;
     curTimerInterval = null;
@@ -349,6 +358,24 @@ function start() {
 $(document).ready(function() {
   loadFaceTrackingModel();
   initHandTracking();
+
+  try {
+    $.ajax({
+      url: "/.netlify/functions/stats",
+      dataType: "json"
+    }).done(function(resp) {
+      try {
+        if (resp.total) {
+          $("#stats-count").html(resp.total);
+          $("#stats").show();
+        }
+      } catch (err) {
+        console.error(err);
+      }
+    });
+  } catch (err) {
+    console.error(err);
+  }
 
   const loadingInterval = setInterval(function() {
     if (!handTrackModel || !faceTrackingReady()) {

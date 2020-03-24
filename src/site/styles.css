@@ -8,8 +8,8 @@ body * {
 }
 
 body a {
-    color: #2a4bed;
-    font-weight: 500;
+  color: #2a4bed;
+  font-weight: 500;
 }
 
 header {
@@ -34,9 +34,9 @@ header {
   text-align: center;
   margin-left: auto;
   margin-right: auto;
-  margin-top: 4%;
+  margin-top: 32px;
   line-height: 1.5;
-  font-size: 18px !important;;
+  font-size: 18px !important;
   max-width: 700px;
 }
 
@@ -69,7 +69,7 @@ video {
 }
 
 #start-btn {
-  margin-top: 36px;
+  margin-top: 24px;
 }
 
 button {
@@ -95,7 +95,6 @@ button {
   bottom: 0;
   color: white;
 }
-
 
 #restart-btn {
   background: none;
@@ -220,8 +219,8 @@ button {
   font-weight: 500;
 }
 
-
-#t-link, #f-link {
+#t-link,
+#f-link {
   display: inline-block;
   width: 50px;
   margin: 0px 10px;
@@ -229,4 +228,8 @@ button {
 
 .s-icon {
   width: 100%;
+}
+
+#stats {
+  font-size: 16px;
 }
