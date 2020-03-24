@@ -356,9 +356,6 @@ function start() {
 }
 
 $(document).ready(function() {
-  loadFaceTrackingModel();
-  initHandTracking();
-
   try {
     $.ajax({
       url: "/.netlify/functions/stats",
@@ -376,6 +373,9 @@ $(document).ready(function() {
   } catch (err) {
     console.error(err);
   }
+
+  loadFaceTrackingModel();
+  initHandTracking();
 
   const loadingInterval = setInterval(function() {
     if (!handTrackModel || !faceTrackingReady()) {
