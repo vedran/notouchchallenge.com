@@ -1,12 +1,14 @@
 const { google } = require("googleapis");
+const atob = require("atob");
 
 exports.handler = function(event, context, callback) {
+  console.log(process.env);
   const scopes = "https://www.googleapis.com/auth/analytics.readonly";
 
   const jwt = new google.auth.JWT(
     process.env.CLIENT_EMAIL,
     null,
-    process.env.PRIVATE_KEY,
+    atob(process.env.PRIVATE_KEY),
     scopes
   );
 
@@ -31,7 +33,8 @@ exports.handler = function(event, context, callback) {
             })
           });
         })
-        .catch(() => {
+        .catch(err => {
+          console.log(err);
           callback(null, {
             body: JSON.stringify({
               total: null
@@ -39,7 +42,8 @@ exports.handler = function(event, context, callback) {
           });
         });
     })
-    .catch(() => {
+    .catch(err => {
+      console.log(err);
       callback(null, {
         body: JSON.stringify({
           total: null

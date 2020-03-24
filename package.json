@@ -8,6 +8,7 @@
   },
   "devDependencies": {},
   "dependencies": {
+    "atob": "^2.1.2",
     "googleapis": "^48.0.0"
   }
 }
