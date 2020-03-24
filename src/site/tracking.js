@@ -363,8 +363,8 @@ $(document).ready(function() {
     }).done(function(resp) {
       try {
         if (resp.total) {
-          $("#stats-count").html(resp.total);
-          $("#stats").show();
+          $(".stats-count").html(resp.total);
+          $(".stats").show();
         }
       } catch (err) {
         console.error(err);
