@@ -17,7 +17,7 @@ exports.handler = function(event, context, callback) {
           ids: "ga:213332846",
           "start-date": "60daysAgo",
           "end-date": "today",
-          metrics: "ga:pageviews"
+          metrics: "ga:sessions"
         })
         .then(resp => {
           callback(null, {
