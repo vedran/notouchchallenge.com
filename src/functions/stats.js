@@ -3,17 +3,13 @@ const atob = require("atob");
 
 exports.handler = function(event, context, callback) {
   const scopes = "https://www.googleapis.com/auth/analytics.readonly";
-
-  const jwt = new google.auth.JWT(
-    process.env.CLIENT_EMAIL,
-    null,
-    atob(process.env.PRIVATE_KEY),
-    scopes
-  );
+  const key = JSON.parse(process.env.PRIVATE_KEY);
+  const jwt = new google.auth.JWT(process.env.CLIENT_EMAIL, null, key, scopes);
 
   jwt
     .authorize()
     .then(jwtResponse => {
+      console.log({ jwtResponse });
       google
         .analytics("v3")
         .data.ga.get({
@@ -33,6 +29,7 @@ exports.handler = function(event, context, callback) {
           });
         })
         .catch(err => {
+          console.log(2);
           console.log(err);
           callback(null, {
             body: JSON.stringify({
@@ -42,6 +39,7 @@ exports.handler = function(event, context, callback) {
         });
     })
     .catch(err => {
+      console.log(3);
       console.log(err);
       callback(null, {
         body: JSON.stringify({
